@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Todoist Better Extension Settings</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <p class="eyebrow">Settings</p>
+        <h1>Todoist Better Extension</h1>
+        <p class="lede">Keep V1 narrow: account status, one low-risk preference, and clear submission wiring.</p>
+      </header>
+
+      <section class="card">
+        <h2>Account</h2>
+        <p id="account-status">Checking account…</p>
+        <div class="row">
+          <button id="sign-in" class="primary">Sign in with Todoist</button>
+          <button id="sign-out" class="secondary">Sign out</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Behaviour</h2>
+        <label class="toggle">
+          <input id="open-after-save" type="checkbox">
+          <span>Open Todoist after saving</span>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Submission wiring</h2>
+        <p class="meta-label">Todoist metadata client document</p>
+        <code id="client-id-url"></code>
+        <p class="help">Replace the placeholder URL in <code>background.js</code> before packaging the store build.</p>
+      </section>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

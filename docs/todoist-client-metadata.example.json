@@ -1,0 +1,17 @@
+{
+  "client_name": "Todoist Better Extension",
+  "client_uri": "https://example.com/todoist-better-extension",
+  "logo_uri": "https://example.com/todoist-better-extension/icon-128.png",
+  "redirect_uris": [
+    "https://__CHROME_EXTENSION_ID__.chromiumapp.org/provider_cb"
+  ],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "token_endpoint_auth_method": "none",
+  "application_type": "web"
+}

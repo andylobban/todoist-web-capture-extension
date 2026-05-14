@@ -1,0 +1,58 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, sans-serif;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f7f4f2;
+  color: #1a1a1a;
+}
+.panel {
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+.eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b42318;
+}
+h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+}
+.body, .status {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #45413c;
+}
+button {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.primary {
+  background: #e44332;
+  color: white;
+}
+.secondary {
+  background: #ece7e2;
+  color: #1a1a1a;
+}
+button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.status:empty {
+  display: none;
+}
