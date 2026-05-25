@@ -76,6 +76,10 @@ async function hydrate() {
   const unsupportedReason = response.unsupportedReason || '';
   setFormDisabled(Boolean(unsupportedReason));
   status.textContent = unsupportedReason;
+
+  if (!unsupportedReason) {
+    queueMicrotask(() => saveTaskButton.focus());
+  }
 }
 
 function showLoading() {
