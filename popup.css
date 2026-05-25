@@ -18,6 +18,10 @@ body {
   color: var(--text);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .panel {
   padding: 16px;
   display: grid;
