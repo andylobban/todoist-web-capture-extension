@@ -1,6 +1,6 @@
 const TODOIST_AUTHORIZE_URL = 'https://app.todoist.com/oauth/authorize';
 const TODOIST_TOKEN_URL = 'https://api.todoist.com/oauth/access_token';
-const TODOIST_TASKS_URL = 'https://api.todoist.com/rest/v2/tasks';
+const TODOIST_TASKS_URL = 'https://api.todoist.com/api/v1/tasks';
 const POPUP_PATH = 'popup.html';
 const CONFIG = {
   clientIdMetadataUrl: 'https://andylobban.github.io/todoist-web-capture-extension/todoist-client-metadata.json',
