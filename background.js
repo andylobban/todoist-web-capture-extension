@@ -451,7 +451,16 @@ async function fetchTodoistCollection(url, accessToken) {
     throw new Error(await readTodoistError(response, 'Couldn’t load Todoist data. Try again.'));
   }
   const data = await response.json();
-  return Array.isArray(data) ? data : [];
+  return normaliseTodoistCollection(data);
+}
+
+function normaliseTodoistCollection(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.projects)) return data.projects;
+  if (Array.isArray(data?.labels)) return data.labels;
+  return [];
 }
 
 async function readTodoistError(response, fallbackMessage) {

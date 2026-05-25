@@ -1,11 +1,13 @@
+const loadingView = document.getElementById('loading-view');
 const signedOutView = document.getElementById('signed-out-view');
 const signedInView = document.getElementById('signed-in-view');
 const signInButton = document.getElementById('sign-in');
-const openSettingsButton = document.getElementById('open-settings');
 const captureForm = document.getElementById('capture-form');
 const taskTitleInput = document.getElementById('task-title');
-const projectSelect = document.getElementById('project-id');
-const labelsList = document.getElementById('labels-list');
+const projectNameInput = document.getElementById('project-name');
+const projectOptions = document.getElementById('project-options');
+const labelsInput = document.getElementById('labels-input');
+const labelOptions = document.getElementById('label-options');
 const dueDateInput = document.getElementById('due-date');
 const prioritySelect = document.getElementById('priority');
 const descriptionInput = document.getElementById('description');
@@ -13,19 +15,14 @@ const pageUrl = document.getElementById('page-url');
 const saveTaskButton = document.getElementById('save-task');
 const status = document.getElementById('status');
 
-let popupState = null;
+let projectsByName = new Map();
 
 signInButton.addEventListener('click', async () => {
   await runBusy(signInButton, 'Signing in…', async () => {
     const response = await chrome.runtime.sendMessage({ type: 'todoist.signIn' });
     if (!response?.ok) throw new Error(response?.error || 'Couldn’t sign in to Todoist. Try again.');
-    status.textContent = 'Signed in. Loading capture form…';
     await hydrate();
   });
-});
-
-openSettingsButton.addEventListener('click', async () => {
-  await chrome.runtime.openOptionsPage();
 });
 
 captureForm.addEventListener('submit', async (event) => {
@@ -35,8 +32,8 @@ captureForm.addEventListener('submit', async (event) => {
       type: 'todoist.createTask',
       payload: {
         title: taskTitleInput.value.trim(),
-        projectId: projectSelect.value || null,
-        labels: getSelectedLabels(),
+        projectId: resolveProjectId(projectNameInput.value),
+        labels: parseLabels(labelsInput.value),
         dueDate: dueDateInput.value || null,
         priority: prioritySelect.value ? Number(prioritySelect.value) : null,
         description: descriptionInput.value.trim() || null
@@ -51,6 +48,7 @@ captureForm.addEventListener('submit', async (event) => {
 hydrate();
 
 async function hydrate() {
+  showLoading();
   const response = await chrome.runtime.sendMessage({ type: 'todoist.getPopupState' });
   if (!response?.ok) {
     showSignedOut();
@@ -58,7 +56,6 @@ async function hydrate() {
     return;
   }
 
-  popupState = response;
   if (!response.signedIn) {
     showSignedOut();
     status.textContent = response.unsupportedReason || '';
@@ -69,74 +66,87 @@ async function hydrate() {
   populateProjects(response.projects || []);
   populateLabels(response.labels || []);
   taskTitleInput.value = response.defaultTitle || '';
+  projectNameInput.value = '';
+  labelsInput.value = '';
   descriptionInput.value = '';
   dueDateInput.value = '';
   prioritySelect.value = '';
   pageUrl.textContent = response.pageUrl || '';
 
   const unsupportedReason = response.unsupportedReason || '';
-  saveTaskButton.disabled = Boolean(unsupportedReason);
-  taskTitleInput.disabled = Boolean(unsupportedReason);
-  projectSelect.disabled = Boolean(unsupportedReason);
-  dueDateInput.disabled = Boolean(unsupportedReason);
-  prioritySelect.disabled = Boolean(unsupportedReason);
-  descriptionInput.disabled = Boolean(unsupportedReason);
-  setCheckboxesDisabled(Boolean(unsupportedReason));
+  setFormDisabled(Boolean(unsupportedReason));
   status.textContent = unsupportedReason;
 }
 
+function showLoading() {
+  loadingView.hidden = false;
+  signedOutView.hidden = true;
+  signedInView.hidden = true;
+}
+
 function showSignedOut() {
+  loadingView.hidden = true;
   signedOutView.hidden = false;
   signedInView.hidden = true;
 }
 
 function showSignedIn() {
+  loadingView.hidden = true;
   signedOutView.hidden = true;
   signedInView.hidden = false;
 }
 
 function populateProjects(projects) {
-  projectSelect.innerHTML = '<option value="">Inbox</option>';
+  projectsByName = new Map();
+  projectOptions.innerHTML = '';
+
   for (const project of projects) {
+    const name = String(project.name || '').trim();
+    const id = project.id == null ? '' : String(project.id);
+    if (!name || !id) continue;
+    projectsByName.set(name.toLowerCase(), id);
+
     const option = document.createElement('option');
-    option.value = project.id;
-    option.textContent = project.name;
-    projectSelect.append(option);
+    option.value = name;
+    projectOptions.append(option);
   }
 }
 
 function populateLabels(labels) {
-  labelsList.innerHTML = '';
-  if (!labels.length) {
-    labelsList.className = 'checkbox-list empty-state';
-    labelsList.textContent = 'No tags yet.';
-    return;
-  }
-
-  labelsList.className = 'checkbox-list';
+  labelOptions.innerHTML = '';
   for (const label of labels) {
-    const wrapper = document.createElement('label');
-    wrapper.className = 'checkbox-pill';
-
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.value = label.name;
-
-    const text = document.createElement('span');
-    text.textContent = label.name;
-
-    wrapper.append(input, text);
-    labelsList.append(wrapper);
+    const name = String(label.name || '').trim();
+    if (!name) continue;
+    const option = document.createElement('option');
+    option.value = name;
+    labelOptions.append(option);
   }
 }
 
-function getSelectedLabels() {
-  return Array.from(labelsList.querySelectorAll('input[type="checkbox"]:checked'), (input) => input.value);
+function resolveProjectId(name) {
+  const value = String(name || '').trim();
+  if (!value) return null;
+  return projectsByName.get(value.toLowerCase()) || null;
 }
 
-function setCheckboxesDisabled(disabled) {
-  for (const input of labelsList.querySelectorAll('input[type="checkbox"]')) {
-    input.disabled = disabled;
+function parseLabels(value) {
+  return String(value || '')
+    .split(',')
+    .map((label) => label.trim())
+    .filter(Boolean);
+}
+
+function setFormDisabled(disabled) {
+  for (const element of [
+    taskTitleInput,
+    projectNameInput,
+    labelsInput,
+    dueDateInput,
+    prioritySelect,
+    descriptionInput,
+    saveTaskButton
+  ]) {
+    element.disabled = disabled;
   }
 }
 

@@ -8,16 +8,12 @@
   </head>
   <body>
     <main class="panel">
-      <header class="panel-header">
-        <div>
-          <p class="eyebrow">Todoist Web Capture Extension</p>
-          <h1 id="panel-title">Save this page to Todoist</h1>
-        </div>
-        <button id="open-settings" class="ghost" type="button">Settings</button>
-      </header>
+      <section id="loading-view" class="stack">
+        <p class="body">Loading…</p>
+      </section>
 
-      <section id="signed-out-view" class="stack">
-        <p class="body">Sign in once, then click the extension any time to save the current page with the project, tags, and date you want.</p>
+      <section id="signed-out-view" class="stack" hidden>
+        <p class="body">Sign in with Todoist to save the current page.</p>
         <button id="sign-in" class="primary" type="button">Sign in with Todoist</button>
       </section>
 
@@ -30,15 +26,15 @@
 
           <label class="field">
             <span>Project</span>
-            <select id="project-id" name="projectId">
-              <option value="">Inbox</option>
-            </select>
+            <input id="project-name" name="projectName" type="text" list="project-options" placeholder="Inbox">
+            <datalist id="project-options"></datalist>
           </label>
 
-          <fieldset class="field">
-            <legend>Tags</legend>
-            <div id="labels-list" class="checkbox-list empty-state">No tags yet.</div>
-          </fieldset>
+          <label class="field">
+            <span>Tags</span>
+            <input id="labels-input" name="labels" type="text" list="label-options" placeholder="Comma-separated tags">
+            <datalist id="label-options"></datalist>
+          </label>
 
           <div class="row">
             <label class="field">
@@ -50,17 +46,17 @@
               <span>Priority</span>
               <select id="priority" name="priority">
                 <option value="">None</option>
-                <option value="4">P4</option>
-                <option value="3">P3</option>
-                <option value="2">P2</option>
-                <option value="1">P1</option>
+                <option value="1">🔴 P1</option>
+                <option value="2">🟠 P2</option>
+                <option value="3">🔵 P3</option>
+                <option value="4">⚪ P4</option>
               </select>
             </label>
           </div>
 
           <label class="field">
-            <span>Notes</span>
-            <textarea id="description" name="description" rows="3" placeholder="Optional notes"></textarea>
+            <span>Description</span>
+            <textarea id="description" name="description" rows="3" placeholder="Optional description"></textarea>
           </label>
 
           <p id="page-url" class="meta"></p>
