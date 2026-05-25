@@ -14,8 +14,8 @@ const LAST_SAVE_KEY = 'lastSaveByTab';
 const inFlightByTab = new Map();
 
 chrome.runtime.onInstalled.addListener(async () => {
-  await chrome.storage.local.setAccessLevel?.({ accessLevel: 'trusted_contexts' });
-  await chrome.storage.session.setAccessLevel?.({ accessLevel: 'trusted_contexts' });
+  await chrome.storage.local.setAccessLevel?.({ accessLevel: 'TRUSTED_CONTEXTS' });
+  await chrome.storage.session.setAccessLevel?.({ accessLevel: 'TRUSTED_CONTEXTS' });
   chrome.contextMenus.create({
     id: 'save-page-to-todoist',
     title: 'Save page to Todoist',
