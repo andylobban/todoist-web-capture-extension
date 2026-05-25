@@ -3,7 +3,7 @@ const TODOIST_TOKEN_URL = 'https://api.todoist.com/oauth/access_token';
 const TODOIST_TASKS_URL = 'https://api.todoist.com/rest/v2/tasks';
 const POPUP_PATH = 'popup.html';
 const CONFIG = {
-  clientIdMetadataUrl: 'https://example.com/todoist/chrome-extension-client.json',
+  clientIdMetadataUrl: 'https://andylobban.github.io/todoist-web-capture-extension/todoist-client-metadata.json',
   openTodoistAfterSaveDefault: false,
   requestTimeoutMs: 12000,
   recentDuplicateWindowMs: 5000
