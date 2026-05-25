@@ -1,4 +1,4 @@
-# QA checklist — Todoist Better Extension V1
+# QA checklist — Todoist Web Capture Extension V1
 
 ## Auth
 - [ ] Signed-out click opens the onboarding popup.

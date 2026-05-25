@@ -1,7 +1,7 @@
 {
-  "client_name": "Todoist Better Extension",
-  "client_uri": "https://example.com/todoist-better-extension",
-  "logo_uri": "https://example.com/todoist-better-extension/icon-128.png",
+  "client_name": "Todoist Web Capture Extension",
+  "client_uri": "https://example.com/todoist-web-capture-extension",
+  "logo_uri": "https://example.com/todoist-web-capture-extension/icon-128.png",
   "redirect_uris": [
     "https://__CHROME_EXTENSION_ID__.chromiumapp.org/provider_cb"
   ],

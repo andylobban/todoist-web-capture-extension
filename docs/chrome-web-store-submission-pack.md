@@ -22,4 +22,4 @@
 5. Minimal settings page showing connected account and one preference
 
 ## Packaging note
-Use `npm run package` to create `dist/todoist-better-extension.zip` after swapping the placeholder client metadata URL.
+Use `npm run package` to create `dist/todoist-web-capture-extension.zip` after swapping the placeholder client metadata URL.

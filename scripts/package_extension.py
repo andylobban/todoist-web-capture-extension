@@ -1,7 +1,7 @@
 from pathlib import Path
 import zipfile
 root = Path(__file__).resolve().parent.parent
-out = root / 'dist' / 'todoist-better-extension.zip'
+out = root / 'dist' / 'todoist-web-capture-extension.zip'
 out.parent.mkdir(parents=True, exist_ok=True)
 if out.exists():
     out.unlink()

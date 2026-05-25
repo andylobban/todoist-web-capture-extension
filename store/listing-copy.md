@@ -1,13 +1,13 @@
 # Chrome Web Store listing copy draft
 
 ## Name
-Todoist Better Extension
+Todoist Web Capture Extension
 
 ## Short description
 Save the current page to Todoist in one click.
 
 ## Detailed description
-Todoist Better Extension cuts the browser-capture flow down to one deliberate click.
+Todoist Web Capture Extension cuts the browser-capture flow down to one deliberate click.
 
 ### What it does
 - Saves the current page title straight to Todoist

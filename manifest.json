@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Todoist Better Extension",
+  "name": "Todoist Web Capture Extension",
   "description": "Save the current page to Todoist in one click.",
   "version": "0.1.0",
   "minimum_chrome_version": "116",

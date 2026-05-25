@@ -1,6 +1,6 @@
 # Privacy policy draft
 
-Todoist Better Extension only sends data to Todoist when the user explicitly triggers a save.
+Todoist Web Capture Extension only sends data to Todoist when the user explicitly triggers a save.
 
 ## Data handled
 - Current page title

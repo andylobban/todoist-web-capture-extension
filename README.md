@@ -1,6 +1,6 @@
-# Todoist Better Extension
+# Todoist Web Capture Extension
 
-Todoist Better Extension is a Manifest V3 Chrome extension that saves the current page to Todoist in one click.
+Todoist Web Capture Extension is a Manifest V3 Chrome extension that saves the current page to Todoist in one click.
 
 ## Current status
 This repository contains a working V1 scaffold:
@@ -57,7 +57,7 @@ This verifies the JavaScript files with `node --check`.
 npm run package
 ```
 
-This creates `dist/todoist-better-extension.zip`.
+This creates `dist/todoist-web-capture-extension.zip`.
 
 ## Release path
 The practical route from this scaffold to store submission is:
