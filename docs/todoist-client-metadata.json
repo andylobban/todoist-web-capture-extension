@@ -4,8 +4,7 @@
   "client_uri": "https://andylobban.github.io/todoist-web-capture-extension/",
   "logo_uri": "https://andylobban.github.io/todoist-web-capture-extension/icons/icon128.png",
   "redirect_uris": [
-    "https://dbdigodghakiphdloipnpojnbgnnifkk.chromiumapp.org/provider_cb",
-    "https://__CHROME_EXTENSION_ID__.chromiumapp.org/provider_cb"
+    "https://dbdigodghakiphdloipnpojnbgnnifkk.chromiumapp.org/provider_cb"
   ],
   "grant_types": [
     "authorization_code",
@@ -15,5 +14,5 @@
     "code"
   ],
   "token_endpoint_auth_method": "none",
-  "scope": "task:add,data:read_write"
+  "scope": "data:read_write"
 }
