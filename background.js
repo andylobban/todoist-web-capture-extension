@@ -1,6 +1,8 @@
 const TODOIST_AUTHORIZE_URL = 'https://app.todoist.com/oauth/authorize';
 const TODOIST_TOKEN_URL = 'https://api.todoist.com/oauth/access_token';
 const TODOIST_TASKS_URL = 'https://api.todoist.com/api/v1/tasks';
+const TODOIST_PROJECTS_URL = 'https://api.todoist.com/api/v1/projects';
+const TODOIST_LABELS_URL = 'https://api.todoist.com/api/v1/labels';
 const POPUP_PATH = 'popup.html';
 const CONFIG = {
   clientIdMetadataUrl: 'https://andylobban.github.io/todoist-web-capture-extension/todoist-client-metadata.json',
@@ -66,6 +68,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
       return;
     }
+    if (message?.type === 'todoist.getPopupState') {
+      const state = await getPopupState();
+      sendResponse({ ok: true, ...state });
+      return;
+    }
+    if (message?.type === 'todoist.createTask') {
+      const task = await createTaskFromForm(message.payload ?? {});
+      sendResponse({ ok: true, task });
+      return;
+    }
     if (message?.type === 'todoist.setSettings') {
       const settings = await saveSettings(message.payload ?? {});
       sendResponse({ ok: true, settings });
@@ -93,9 +105,7 @@ async function handleSaveFromTab(tab) {
 
   const tokens = await ensureValidTokens();
   if (!tokens?.accessToken) {
-    await chrome.action.setPopup({ popup: POPUP_PATH });
     await setActionFeedback('', '#000000', 'Sign in to Todoist to save pages.');
-    await chrome.action.openPopup();
     return;
   }
 
@@ -161,8 +171,7 @@ function getUnsupportedReason(url) {
 function buildTaskPayload(tab) {
   const title = cleanTitle(tab.title, tab.url);
   return {
-    content: title,
-    description: `Source: ${tab.url}`
+    content: buildMarkdownLinkedTitle(title, tab.url)
   };
 }
 
@@ -297,7 +306,6 @@ async function getLastSaveByTab() {
 async function updateActionAvailability() {
   const tokens = await getTokens();
   const signedIn = Boolean(tokens?.refreshToken);
-  await chrome.action.setPopup({ popup: signedIn ? '' : POPUP_PATH });
   await chrome.action.setTitle({ title: signedIn ? 'Save page to Todoist' : 'Sign in to Todoist to save pages in one click' });
   if (!signedIn) {
     await chrome.action.setBadgeText({ text: '' });
@@ -336,6 +344,137 @@ function normaliseErrorMessage(error) {
     return error.message;
   }
   return 'Couldn’t save to Todoist. Try again.';
+}
+
+async function getPopupState() {
+  const [tokens, settings, activeTab] = await Promise.all([
+    ensureValidTokens(),
+    getSettings(),
+    getActiveTab()
+  ]);
+
+  const unsupportedReason = getUnsupportedReason(activeTab?.url);
+  if (!tokens?.accessToken) {
+    return {
+      signedIn: false,
+      openTodoistAfterSave: settings.openTodoistAfterSave,
+      clientIdMetadataUrl: CONFIG.clientIdMetadataUrl,
+      unsupportedReason
+    };
+  }
+
+  const [projects, labels] = await Promise.all([
+    fetchTodoistCollection(TODOIST_PROJECTS_URL, tokens.accessToken),
+    fetchTodoistCollection(TODOIST_LABELS_URL, tokens.accessToken)
+  ]);
+
+  return {
+    signedIn: true,
+    openTodoistAfterSave: settings.openTodoistAfterSave,
+    clientIdMetadataUrl: CONFIG.clientIdMetadataUrl,
+    unsupportedReason,
+    defaultTitle: cleanTitle(activeTab?.title, activeTab?.url),
+    pageUrl: activeTab?.url ?? '',
+    projects: projects
+      .map((project) => ({ id: project.id, name: project.name }))
+      .filter((project) => project.id && project.name)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    labels: labels
+      .map((label) => ({ id: label.id, name: label.name }))
+      .filter((label) => label.name)
+      .sort((a, b) => a.name.localeCompare(b.name))
+  };
+}
+
+async function createTaskFromForm(form) {
+  const activeTab = await getActiveTab();
+  const unsupportedReason = getUnsupportedReason(activeTab?.url);
+  if (unsupportedReason) {
+    throw new Error(unsupportedReason);
+  }
+
+  const tokens = await ensureValidTokens();
+  if (!tokens?.accessToken) {
+    throw new Error('Sign in to Todoist to save pages.');
+  }
+
+  const title = (form.title || '').trim() || cleanTitle(activeTab?.title, activeTab?.url);
+  const payload = {
+    content: buildMarkdownLinkedTitle(title, activeTab.url)
+  };
+
+  if (form.description) payload.description = form.description;
+  if (form.projectId) payload.project_id = form.projectId;
+  if (Array.isArray(form.labels) && form.labels.length) payload.labels = form.labels;
+  if (Number.isInteger(form.priority)) payload.priority = form.priority;
+  if (form.dueDate) payload.due_date = form.dueDate;
+
+  const response = await fetchWithTimeout(TODOIST_TASKS_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${tokens.accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      await clearTokens();
+      throw new Error('Sign in to Todoist to save pages.');
+    }
+    throw new Error(await readTodoistError(response, 'Couldn’t save to Todoist. Try again.'));
+  }
+
+  const createdTask = await response.json();
+  await setActionFeedback('OK', '#1f883d', 'Saved to Todoist');
+
+  const settings = await getSettings();
+  if (settings.openTodoistAfterSave && createdTask?.url) {
+    await chrome.tabs.create({ url: createdTask.url });
+  }
+
+  return createdTask;
+}
+
+async function fetchTodoistCollection(url, accessToken) {
+  const response = await fetchWithTimeout(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  if (!response.ok) {
+    if (response.status === 401) {
+      await clearTokens();
+      throw new Error('Sign in to Todoist to save pages.');
+    }
+    throw new Error(await readTodoistError(response, 'Couldn’t load Todoist data. Try again.'));
+  }
+  const data = await response.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function readTodoistError(response, fallbackMessage) {
+  try {
+    const text = await response.text();
+    if (!text) return fallbackMessage;
+    const parsed = JSON.parse(text);
+    return parsed.error || parsed.message || fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+}
+
+function buildMarkdownLinkedTitle(title, url) {
+  return `[${escapeMarkdownText(title)}](${encodeUrlForMarkdown(url)})`;
+}
+
+function escapeMarkdownText(text) {
+  return String(text || '').replace(/[\\\[\]]/g, '\\$&');
+}
+
+function encodeUrlForMarkdown(url) {
+  return encodeURI(String(url || '')).replace(/\(/g, '%28').replace(/\)/g, '%29');
 }
 
 function createRandomString(length) {
