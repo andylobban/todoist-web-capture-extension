@@ -1,4 +1,4 @@
-const TODOIST_AUTHORIZE_URL = 'https://todoist.com/oauth/authorize';
+const TODOIST_AUTHORIZE_URL = 'https://app.todoist.com/oauth/authorize';
 const TODOIST_TOKEN_URL = 'https://api.todoist.com/oauth/access_token';
 const TODOIST_TASKS_URL = 'https://api.todoist.com/rest/v2/tasks';
 const POPUP_PATH = 'popup.html';
