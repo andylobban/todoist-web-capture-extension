@@ -30,7 +30,7 @@ Before a public build can be tested end to end, that URL must be replaced with a
 - `background.js` — service worker, auth flow, capture logic, and Todoist API calls
 - `popup.html`, `popup.js`, `popup.css` — popup UI and signed-out onboarding
 - `options.html`, `options.js`, `options.css` — settings UI
-- `icons/` — extension icons
+- `icons/` — extension icons, with `icon.svg` as the source for generated PNG sizes
 - `docs/qa-checklist.md` — functional QA checklist
 - `docs/chrome-web-store-submission-pack.md` — store submission checklist
 - `docs/todoist-client-metadata.example.json` — example Todoist metadata client document
