@@ -177,12 +177,33 @@ function buildTaskPayload(tab) {
 
 function cleanTitle(title, url) {
   const trimmed = (title || '').replace(/\s+/g, ' ').trim();
+  const gmailTitle = cleanGmailTitle(trimmed, url);
+  if (gmailTitle) return gmailTitle.slice(0, 500);
   if (trimmed) return trimmed.slice(0, 500);
   try {
     return new URL(url).hostname;
   } catch {
     return 'Untitled page';
   }
+}
+
+function cleanGmailTitle(title, url) {
+  if (!title) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname !== 'mail.google.com') return null;
+  } catch {
+    return null;
+  }
+
+  const emailMatch = title.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  if (!emailMatch) return null;
+
+  const subject = title.slice(0, emailMatch.index).replace(/\s+-\s*$/, '').trim();
+  if (!subject) return null;
+
+  return `${subject} - Email to ${emailMatch[0]}`;
 }
 
 async function signIn() {

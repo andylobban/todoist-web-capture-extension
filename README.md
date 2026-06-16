@@ -7,6 +7,7 @@ This repository contains a working V1 scaffold:
 - Todoist sign-in flow designed for Todoist public-client metadata + PKCE
 - One-click toolbar save of the current page title and URL
 - Context-menu save path using the same capture logic
+- Gmail message captures simplify the task title to `[subject] - Email to [account]`
 - Signed-out onboarding popup
 - Minimal settings page with sign-out and an `Open Todoist after saving` preference
 - Chrome Web Store support assets including QA notes, listing copy, and privacy-policy draft

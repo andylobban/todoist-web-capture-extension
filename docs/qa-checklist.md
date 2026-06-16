@@ -11,6 +11,7 @@
 - [ ] Task `content` matches the page title.
 - [ ] Task `description` includes the source URL.
 - [ ] Context-menu action creates the same payload.
+- [ ] Gmail message capture uses `[subject] - Email to [account]` rather than the full Gmail tab title.
 - [ ] Duplicate click during an in-flight save does not create a second task.
 - [ ] Immediate repeat click within five seconds shows success rather than double-saving.
 
