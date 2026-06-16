@@ -13,21 +13,19 @@ const CONFIG = {
 const TOKEN_KEY = 'todoistTokens';
 const SETTINGS_KEY = 'settings';
 const LAST_SAVE_KEY = 'lastSaveByTab';
+const SAVE_PAGE_CONTEXT_MENU_ID = 'save-page-to-todoist';
 const inFlightByTab = new Map();
 
 chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.local.setAccessLevel?.({ accessLevel: 'TRUSTED_CONTEXTS' });
   await chrome.storage.session.setAccessLevel?.({ accessLevel: 'TRUSTED_CONTEXTS' });
-  chrome.contextMenus.create({
-    id: 'save-page-to-todoist',
-    title: 'Save page to Todoist',
-    contexts: ['page']
-  });
+  await installContextMenu();
   await updateActionAvailability();
 });
 
-chrome.runtime.onStartup?.addListener(() => {
-  updateActionAvailability();
+chrome.runtime.onStartup?.addListener(async () => {
+  await installContextMenu();
+  await updateActionAvailability();
 });
 
 chrome.storage.onChanged.addListener(async (changes, areaName) => {
@@ -41,7 +39,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === 'save-page-to-todoist') {
+  if (info.menuItemId === SAVE_PAGE_CONTEXT_MENU_ID) {
     await handleSaveFromTab(tab);
   }
 });
@@ -89,6 +87,33 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   });
   return true;
 });
+
+async function installContextMenu() {
+  await removeContextMenuItem(SAVE_PAGE_CONTEXT_MENU_ID);
+  await createContextMenuItem({
+    id: SAVE_PAGE_CONTEXT_MENU_ID,
+    title: 'Save page to Todoist',
+    contexts: ['page']
+  });
+}
+
+function removeContextMenuItem(id) {
+  return new Promise((resolve) => {
+    chrome.contextMenus.remove(id, () => {
+      chrome.runtime.lastError;
+      resolve();
+    });
+  });
+}
+
+function createContextMenuItem(item) {
+  return new Promise((resolve) => {
+    chrome.contextMenus.create(item, () => {
+      chrome.runtime.lastError;
+      resolve();
+    });
+  });
+}
 
 async function handleSaveFromTab(tab) {
   const activeTab = tab ?? await getActiveTab();
