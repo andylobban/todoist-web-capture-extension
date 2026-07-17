@@ -1,5 +1,6 @@
 {
   "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqFxTXOpmtCqVldZ0+QTirIpfFrC6ArYE/50ENKaKz7GFqalTJN4F6HC6FPSVyX42dA4db6AuS/HFHJVsZPZQ+5h+cYf7YRR50zlIO2uy6aTaVvRN+F8nMUxJslxNkD6nyq8FdEN2Ip3KhSpbnibmrbgwkjbrFOIq+2ZDtmWCwJMfF2vm8cligwU+J++DoLEnoVcAdD+3Fx3ynxLAZDwqXm1Te9kzhtcabjaCMn7shYjEsTvRm1SuWg32R2HWQsej/xn1tEV6+hqq/Stg0DcKBQglFn90GvikurDDdRhFJWuqkd4PI2ZyHVbGqbJizHpKzTqMFA6/V3aZK/DV+inMTQIDAQAB",
   "name": "Todoist Web Capture Extension",
   "description": "Save the current page to Todoist in one click.",
   "version": "0.1.0",

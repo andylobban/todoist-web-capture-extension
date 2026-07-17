@@ -4,7 +4,7 @@
   "client_uri": "https://andylobban.github.io/todoist-web-capture-extension/",
   "logo_uri": "https://andylobban.github.io/todoist-web-capture-extension/icons/icon128.png",
   "redirect_uris": [
-    "https://dbdigodghakiphdloipnpojnbgnnifkk.chromiumapp.org/provider_cb"
+    "https://emcnfknimpajolcdbekcblkkhkbipeac.chromiumapp.org/provider_cb"
   ],
   "grant_types": [
     "authorization_code",
